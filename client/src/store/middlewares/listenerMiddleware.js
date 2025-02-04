@@ -22,6 +22,7 @@ listenerMiddleware.startListening({
   },
 
   effect: (action, { dispatch }) => {
+    console.log(action);
     dispatch(setError("Server error. Please try again later."));
     dispatch(makeLoaderFalse()); // Optionally stop the loader after error
   },

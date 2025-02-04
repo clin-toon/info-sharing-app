@@ -9,16 +9,15 @@ import {
   getUserNameOfPostOwner,
   sortPost,
 } from "../features/singlePostSlice";
-import { getAllPosts } from "../features/singlePostSlice";
+import { getAllPosts, getUserInfo } from "../features/singlePostSlice";
 import { getCommentsOfPosts } from "../features/commentsSlice";
-import { getUserInfo } from "../features/singlePostSlice";
 import useSinglePost from "../hooks/useSinglePost";
 
 const SinglePostView = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { mainPost, postOfUserId, otherPosts, postOwner, mainPostId } =
-    useSinglePost();
+  const bla = useSelector((state) => state.singlePost.mainPost);
+  const { postOfUserId, otherPosts, postOwner, mainPostId } = useSinglePost();
   const {
     createdAt,
     postCategory,
@@ -27,7 +26,7 @@ const SinglePostView = () => {
     thumbnail,
     _id,
     postedBy,
-  } = mainPost;
+  } = bla;
 
   const { fullName, dp } = postOwner;
 
@@ -65,7 +64,9 @@ const SinglePostView = () => {
     dispatch(getSinglePost(mainPostId || postId));
     dispatch(getAllPosts(mainPostId || postId));
     dispatch(getCommentsOfPosts(mainPostId || postId));
-  }, [postOfUserId, mainPostId]);
+    dispatch(getUserInfo({ userId: postOfUserId }));
+    dispatch(getUserNameOfPostOwner({ userId: postOfUserId }));
+  }, [location.pathname]);
 
   return (
     <>
@@ -80,6 +81,7 @@ const SinglePostView = () => {
             author={fullName}
             postId={_id}
             picture={dp}
+            postOwner={postedBy}
           />
         </article>
 

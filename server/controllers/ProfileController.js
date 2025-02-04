@@ -3,7 +3,6 @@ const User = require("../models/User");
 
 const getProfileOfSpecificUser = async (req, res, next) => {
   const { userId } = req.params;
-
   try {
     const searchUser = await Profile.findOne({ user: userId });
     if (!searchUser) {
@@ -56,7 +55,6 @@ const updateProfile = async (req, res, next) => {
 
 const getUsername = async (req, res, next) => {
   const { id } = req.params;
-
   try {
     const user = await User.findById(id);
 

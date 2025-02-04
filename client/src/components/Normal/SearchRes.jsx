@@ -31,9 +31,7 @@ const SearchRes = ({
     dispatch(getCommentsOfPosts(postId));
   };
 
-  useEffect(() => {
-    console.log("Caled");
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div

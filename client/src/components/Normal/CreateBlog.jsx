@@ -4,6 +4,7 @@ import { blogKeywords } from "../../constants/Constants";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import useAppSelector from "../../hooks/useAppSelector";
+import { useNavigate } from "react-router-dom";
 import {
   makeModalTrue,
   makeLoaderFalse,
@@ -13,6 +14,7 @@ import {
 
 const CreateBlog = ({}) => {
   const api = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   const { authUser, authToken } = useAppSelector();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -62,7 +64,9 @@ const CreateBlog = ({}) => {
           des: "Your post has been created succesfully ",
         })
       );
+      navigate(`/dashboard/your-post/${authUser}`);
     } catch (error) {
+      console.log(error);
       dispatch(makeLoaderFalse());
       dispatch(makeModalTrue());
       dispatch(

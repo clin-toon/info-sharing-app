@@ -96,7 +96,7 @@ export const deletePostsOfUser = createAsyncThunk(
 export const homePagePosts = createAsyncThunk(
   "gettingHomePagePosts",
 
-  async ({ isLoggedIn }, { dispatch, rejectWithValue }) => {
+  async (isLoggedIn, { dispatch, rejectWithValue }) => {
     try {
       if (isLoggedIn) {
         try {
@@ -105,11 +105,12 @@ export const homePagePosts = createAsyncThunk(
 
           return res.data;
         } catch (error) {
-          rejectWithValue(error);
+          rejectWithValue({ error });
         }
       } else {
         try {
           const res = await axios.get(`${api}posts/home-page`);
+
           dispatch(makeLoaderFalse());
           return res.data;
         } catch (error) {
@@ -124,6 +125,7 @@ export const homePagePosts = createAsyncThunk(
         }
       }
     } catch (error) {
+      console.log(error);
       dispatch(makeLoaderFalse());
       dispatch(makeModalTrue());
       dispatch(
@@ -179,6 +181,7 @@ const postSlice = createSlice({
         state.lauda = [];
       })
       .addCase(homePagePosts.rejected, (state, action) => {
+        console.log(action);
         state.lauda = [];
       });
   },

@@ -4,12 +4,7 @@ const User = require("../models/User");
 // create new post
 const createNewPost = async (req, res, next) => {
   const { postTitle, postDescription, postCategory } = req.body;
-  const imageUrl = "http://localhost:8001/";
-  let image = "";
-
-  if (req.file) {
-    image = imageUrl + req.file.path;
-  }
+  const imageUrl = req.file.path;
 
   const userId = req.params.userId;
 
@@ -26,7 +21,7 @@ const createNewPost = async (req, res, next) => {
       postTitle,
       postDescription,
       postedBy: userId,
-      thumbnail: image,
+      thumbnail: imageUrl,
     });
 
     const post = await newPost.save();
@@ -53,10 +48,10 @@ const updatePost = async (req, res, next) => {
     if (!searchPost) {
       return res.status(400).json({ msg: "Invalid post id" });
     }
-    let imageUrl = "http://localhost:8001/";
+
     let image = searchPost.thumbnail;
     if (req.file) {
-      image = imageUrl + req.file.path;
+      image = req.file.path;
     }
     const data = {
       postTitle: postTitle === "" ? searchPost.postTitle : postTitle,
@@ -66,7 +61,7 @@ const updatePost = async (req, res, next) => {
       thumbnail: image,
     };
 
-    const updatePost = await Post.findByIdAndUpdate(postId, data, {
+    await Post.findByIdAndUpdate(postId, data, {
       new: true,
       runValidators: true,
     });
@@ -186,9 +181,17 @@ const fetchPostsForHomePage = async (req, res) => {
   try {
     const allPosts = await Post.find();
     let responseArray = [];
-    for (let i = 0; i < 4; i++) {
-      responseArray.push(allPosts[i]);
+    const length = allPosts.length;
+    if (length <= 4) {
+      for (let i = 0; i < length; i++) {
+        responseArray.push(allPosts[i]);
+      }
+    } else {
+      for (let i = 0; i < 4; i++) {
+        responseArray.push(allPosts[i]);
+      }
     }
+
     res.status(200).json(responseArray);
   } catch (error) {
     return res.status(500).json({ msg: "Internal Server error " });
@@ -196,7 +199,7 @@ const fetchPostsForHomePage = async (req, res) => {
 };
 
 const updateLikesOfPost = async (req, res, next) => {
-  const { postId, userId } = req.params;
+  const { userId, postId } = req.params;
 
   try {
     const findPost = await Post.findById(postId);

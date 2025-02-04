@@ -16,7 +16,6 @@ router.get("/get/:userId", getProfileOfSpecificUser);
 router.put("/update-profile/:userId", updateProfile);
 
 // get username
-
 router.get("/get/username/:id", getUsername);
 
 // add followers

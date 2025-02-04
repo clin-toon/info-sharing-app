@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { AiFillLike } from "react-icons/ai";
 import { makeModalTrue, changeModalMessage } from "../../features/modalSlices";
-import AllComments from "./AllComments";
 import { useSelector, useDispatch } from "react-redux";
 import { likePost, removeLike } from "../../features/singlePostSlice";
 import { updateFollowers } from "../../features/profileSlice";
 
-const InteractionButtons = ({ saved }) => {
+const InteractionButtons = ({ postOwnerId }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [followed, setFollowed] = useState(false);
   const postOwnerUserId = useSelector(
@@ -82,10 +81,11 @@ const InteractionButtons = ({ saved }) => {
       );
       return;
     }
+
     try {
       const result = await dispatch(
         updateFollowers({ userId, token, username, postOwnerUserId })
-      ).unwrap();
+      );
       console.log("Request fulfilled:", result);
       setFollowed(true);
     } catch (error) {
@@ -123,20 +123,25 @@ const InteractionButtons = ({ saved }) => {
       </div>
 
       {/* Follow Button */}
-      {!followed ? (
-        <button
-          onClick={follow}
-          className={`text-white bg-secondary hover:bg-gray-700 outline-2 outline-double focus:outline-none font-medium rounded-lg text-sm px-4 py-2 font-sans`}
-        >
-          {"Follow "}
-        </button>
-      ) : (
-        <button
-          onClick={unfollow}
-          className={`text-white bg-secondary hover:bg-gray-700 outline-2 outline-double focus:outline-none font-medium rounded-lg text-sm px-4 py-2 font-sans`}
-        >
-          {"Following"}
-        </button>
+
+      {postOwnerId != userId && (
+        <div className="inline">
+          {!followed ? (
+            <button
+              onClick={follow}
+              className={`text-white bg-secondary hover:bg-gray-700 outline-2 outline-double focus:outline-none font-medium rounded-lg text-sm px-4 py-2 font-sans`}
+            >
+              {"Follow "}
+            </button>
+          ) : (
+            <button
+              onClick={unfollow}
+              className={`text-white bg-secondary hover:bg-gray-700 outline-2 outline-double focus:outline-none font-medium rounded-lg text-sm px-4 py-2 font-sans`}
+            >
+              {"Following"}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

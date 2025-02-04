@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeConverter } from "../../utils/timeConverter";
-import { useDispatch, useSelector } from "react-redux";
-import { changeMainPostId, getUserInfo } from "../../features/singlePostSlice";
-import { getUserNameOfPostOwner } from "../../features/singlePostSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { changeMainPostId } from "../../features/singlePostSlice";
 
 const Trending = ({ thumbnail, title, postId, date, userId }) => {
   const navigate = useNavigate();
@@ -12,10 +11,8 @@ const Trending = ({ thumbnail, title, postId, date, userId }) => {
   useEffect(() => {}, [comments]);
 
   const handleButtonClick = () => {
+    dispatch(changeMainPostId(userId));
     navigate(`/single-post/${postId}`);
-    dispatch(changeMainPostId(postId));
-    dispatch(getUserNameOfPostOwner(userId));
-    dispatch(getUserInfo(userId));
   };
 
   return (

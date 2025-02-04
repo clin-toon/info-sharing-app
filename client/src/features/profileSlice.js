@@ -41,6 +41,8 @@ export const updateFollowers = createAsyncThunk(
     { userId, token, username, postOwnerUserId },
     { dispatch, rejectWithValue }
   ) => {
+    // console.log(userId, postOwnerUserId, username);
+    console.log(username);
     try {
       const res = await axios.put(
         `${api}profile/followers/add/${username}/${userId}`,
@@ -51,7 +53,7 @@ export const updateFollowers = createAsyncThunk(
         }
       );
       dispatch(makeLoaderFalse());
-      dispatch(profileFunc({ userId: postOwnerUserId, token }));
+      dispatch(profileFunc({ authUser: postOwnerUserId, authToken: token }));
       return res.data;
     } catch (error) {
       console.log(error);

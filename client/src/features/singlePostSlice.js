@@ -34,8 +34,18 @@ export const getSinglePost = createAsyncThunk(
 export const getUserInfo = createAsyncThunk(
   "userInfo",
   async (userId, { dispatch, rejectWithValue }) => {
+    // this requires profile model id
+
+    let apiURL;
+    if (userId instanceof Object) {
+      apiURL = `${api}profile/get/${userId.userId}`;
+    } else {
+      apiURL = `${api}profile/get/${userId}`;
+    }
+
     try {
-      const res = await axios.get(`${api}profile/get/${userId}`);
+      const res = await axios.get(apiURL); // calling backend end point  for getting username
+
       dispatch(makeLoaderFalse());
       return res.data;
     } catch (error) {
@@ -56,8 +66,16 @@ export const getUserInfo = createAsyncThunk(
 export const getUserNameOfPostOwner = createAsyncThunk(
   "postUserName",
   async (userId, { dispatch, rejectWithValue }) => {
+    // this requires User model id
+    let apiURL;
+    if (userId instanceof Object) {
+      apiURL = `${api}profile/get/username/${userId.userId}`;
+    } else {
+      apiURL = `${api}profile/get/username/${userId}`;
+    }
     try {
-      const res = await axios.get(`${api}profile/get/username/${userId}`);
+      const res = await axios.get(apiURL); // get username of post owner
+
       dispatch(makeLoaderFalse());
       return res.data;
     } catch (error) {
@@ -78,7 +96,6 @@ export const getUserNameOfPostOwner = createAsyncThunk(
 export const getAllPosts = createAsyncThunk(
   "getPosts",
   async (postId, { dispatch, rejectWithValue }) => {
-    console.log(postId);
     try {
       const res = await axios.get(`${api}posts/find/all`);
       dispatch(makeLoaderFalse());
@@ -93,7 +110,7 @@ export const getAllPosts = createAsyncThunk(
           des: error.response ? error.response.data : "Server error ",
         })
       );
-      console.log(error);
+
       return rejectWithValue(error.message);
     }
   }
@@ -102,13 +119,12 @@ export const getAllPosts = createAsyncThunk(
 export const likePost = createAsyncThunk(
   "like",
   async ({ postId, userId }, { dispatch, rejectWithValue }) => {
-    console.log("Function called ");
     try {
       const res = await axios.put(`${api}posts/like/${postId}/${userId}`);
       dispatch(getSinglePost(postId));
       dispatch(makeLoaderFalse());
 
-      console.log(res);
+      return res.data;
     } catch (error) {
       dispatch(makeLoaderFalse());
       dispatch(makeModalTrue());
@@ -118,7 +134,7 @@ export const likePost = createAsyncThunk(
           des: error.response ? error.response.data : "Server error ",
         })
       );
-      console.log(error);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -133,7 +149,7 @@ export const removeLike = createAsyncThunk(
       dispatch(getSinglePost(postId));
       dispatch(makeLoaderFalse());
 
-      console.log(res);
+      return res.data;
     } catch (error) {
       dispatch(makeLoaderFalse());
       dispatch(makeModalTrue());
@@ -143,7 +159,7 @@ export const removeLike = createAsyncThunk(
           des: error.response ? error.response.data : "Server error ",
         })
       );
-      console.log(error);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -152,7 +168,7 @@ const singlePostSlice = createSlice({
   name: "single post",
   initialState: {
     allPosts: [],
-    mainPost: [],
+    mainPost: {},
     postOwnerUsername: "",
     mainPostLikes: null,
     otherPosts: [],
@@ -165,8 +181,10 @@ const singlePostSlice = createSlice({
       state.otherPosts = action.payload;
     },
     changeMainPostId: (state, action) => {
-      console.log(action.payload);
-      state.mainPostId = action.payload;
+      state.postOfUserId = action.payload;
+    },
+    changePostOwnerUserName: (state, action) => {
+      state.postOwnerUsername = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -189,6 +207,7 @@ const singlePostSlice = createSlice({
   },
 });
 
-export const { sortPost, changeMainPostId } = singlePostSlice.actions;
+export const { sortPost, changeMainPostId, changePostOwnerUserName } =
+  singlePostSlice.actions;
 
 export default singlePostSlice;
